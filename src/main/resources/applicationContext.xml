@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-    http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.0.xsd
-    http://www.springframework.org/schema/tx
-    http://www.springframework.org/schema/tx/spring-tx.xsd">
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+			http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
-	<tx:annotation-driven />
+	<context:component-scan base-package="demo.*" />
+	<tx:annotation-driven transaction-manager="transactionManager" />
 	<tx:jta-transaction-manager />
-
-	<context:component-scan base-package="demo.dao.impl" />
-	<context:component-scan base-package="demo.service.impl" />
-	<context:component-scan base-package="demo.servlet" />
 
 	<bean id="entityManagerFactory1"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -28,7 +32,8 @@
 		</property>
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
 			</props>
 		</property>
 	</bean>
@@ -45,7 +50,8 @@
 		</property>
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
 			</props>
 		</property>
 	</bean>
@@ -91,11 +97,25 @@
 	</bean>
 
 	<bean id="transactionManager"
-		class="org.springframework.transaction.jta.JtaTransactionManager"
-		depends-on="atomikosTransactionManager,atomikosUserTransaction">
+		class="org.springframework.transaction.jta.JtaTransactionManager">
 		<property name="transactionManager" ref="atomikosTransactionManager" />
 		<property name="userTransaction" ref="atomikosUserTransaction" />
 		<property name="allowCustomIsolationLevels" value="true" />
+	</bean>
+
+	<jpa:repositories base-package="demo.dao.table_one"
+		transaction-manager-ref="transactionManager"
+		entity-manager-factory-ref="entityManagerFactory1" />
+
+	<jpa:repositories base-package="demo.dao.table_two"
+		transaction-manager-ref="transactionManager"
+		entity-manager-factory-ref="entityManagerFactory2" />
+
+
+
+	<bean id="transactionalService" class="demo.service.impl.TransactionalServiceImpl">
+		<constructor-arg ref="tableOneDao" />
+		<constructor-arg ref="tableTwoDao" />
 	</bean>
 
 </beans>
