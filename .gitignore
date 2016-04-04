@@ -1,0 +1,22 @@
+### Eclipse ###
+.classpath
+.project
+.settings/
+.metadata/
+.settings_backup/*
+.checkstyle
+.metadata
+.externalToolBuilders/
+
+
+### Maven ###
+target/
+
+### LOG ###
+*.log
+*.log.*
+logs/
+
+/Attendence/
+/target/
+*.p12
