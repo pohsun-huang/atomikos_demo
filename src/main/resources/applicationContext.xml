@@ -21,7 +21,8 @@
 	<tx:jta-transaction-manager />
 
 	<bean id="entityManagerFactory1"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		depends-on="springJtaPlatformAdapter">
 		<property name="persistenceUnitName" value="PersistenceUnit1" />
 		<property name="dataSource" ref="dataSource1" />
 		<property name="jpaVendorAdapter">
@@ -34,12 +35,14 @@
 			<props>
 				<prop key="hibernate.hbm2ddl.auto">create</prop>
 				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+				<prop key="hibernate.transaction.jta.platform">demo.platform.SpringJtaPlatformAdapter</prop>
 			</props>
 		</property>
 	</bean>
-
+	
 	<bean id="entityManagerFactory2"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		depends-on="springJtaPlatformAdapter">
 		<property name="persistenceUnitName" value="PersistenceUnit2" />
 		<property name="dataSource" ref="dataSource2" />
 		<property name="jpaVendorAdapter">
@@ -52,6 +55,7 @@
 			<props>
 				<prop key="hibernate.hbm2ddl.auto">create</prop>
 				<prop key="hibernate.temp.use_jdbc_metadata_defaults">false</prop>
+				<prop key="hibernate.transaction.jta.platform">demo.platform.SpringJtaPlatformAdapter</prop>
 			</props>
 		</property>
 	</bean>
@@ -112,6 +116,9 @@
 		entity-manager-factory-ref="entityManagerFactory2" />
 
 
+	<bean id="springJtaPlatformAdapter" class="demo.platform.SpringJtaPlatformAdapter">
+		<property name="jtaTransactionManager" ref="transactionManager" />
+	</bean>
 
 	<bean id="transactionalService" class="demo.service.impl.TransactionalServiceImpl">
 		<constructor-arg ref="tableOneDao" />
