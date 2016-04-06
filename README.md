@@ -28,5 +28,13 @@ for MacOS user:
 
 8.create db1 and db2 in postgreSQL
 
+for Other user:
+
+1.update max_prepared_transactions = 100 in postgresql.conf
+
+2.restart postgreSQL service
+
+3.create db1 and db2 in postgreSQL
+
 
 
