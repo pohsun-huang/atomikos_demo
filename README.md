@@ -10,6 +10,8 @@ A sample project to demonstrate how a web app can be built using a Spring and at
 
 ####Installation
 
+for MacOS user:
+
 1.go to folder /Library/PostgreSQL/9.3/
 
 2.change /Library/PostgreSQL/9.3/data Sharing & Permissions for 'everyone' to Privilege 'Read & Write'
